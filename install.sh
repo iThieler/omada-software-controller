@@ -105,6 +105,7 @@ apt-get update 2>&1 >/dev/null
 # Install Software dependencies
 echoLOG y "Install Software dependencies"
 for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl snapd; do
+  sleep 2
   if checkPKG $PACKAGE; then
     echoLOG b "already installed: $PACKAGE"
   else
