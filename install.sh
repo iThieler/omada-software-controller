@@ -93,6 +93,20 @@ if ! lsb_release -c | grep -cw "focal" &>/dev/null; then echoLOG r "Script only 
 # Check DNS-A and DNS-AAAA Record
 if [ -z "$DNS_A" ] && [ -z "$DNS_AAAA" ]; then echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record!" && exit 1; fi
 
+# Check DNS-A for privat Network IP
+DNS_A_First=`echo $DNS_A | cut -d. -f1`
+DNS_A_Second=`echo $DNS_A | cut -d. -f2`
+if [ $DNS_A_First -eq 10 ] || [ $DNS_A_First -eq 127 ]; then
+  echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record for public IPs!"
+  exit 1
+elif [ $DNS_A_First -eq 192 ] && [ $DNS_A_Second -eq 168 ]; then
+  echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record for public IPs!"
+  exit 1
+elif [ $DNS_A_First -eq 172 ] && [ $DNS_A_Second -ge 16 ] && [ $DNS_A_Second -le 31 ]; then
+  echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record for public IPs!"
+  exit 1
+fi
+
 echoLOG b "OK, let's get started. Your selection is"
 echoLOG no "DNS A-Record:     ${DNS_A}"
 echoLOG no "DNS AAAA-Record:  ${DNS_AAAA}"
