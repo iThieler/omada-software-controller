@@ -35,6 +35,8 @@ fi
 MongoDB_Version="4.4"
 # Let's Encrypt needs
 Certbot_URL=$(whip_inputbox "OK" "CERTBOT" "What is the Domainname (FQDN) of your server?" "omada.mydomain.com")
+DNS_A=`dig +short $Certbot_URL A`
+DNS_AAAA=`dig +short $Certbot_URL AAAA`
 Certbot_Email=$(whip_inputbox "OK" "CERTBOT" "Which e-mail address is used for certificate messages?" "acme@mydomain.com")
 # Omada Software Controller Version
 sel=("1" "Install Version 5.9.9" \
@@ -88,11 +90,16 @@ fi
 # Check Ubuntu Version
 if ! lsb_release -c | grep -cw "focal" &>/dev/null; then echoLOG r "Script only supports Ubuntu 20.04 (focal)!" && exit 1; fi
 
+# Check DNS-A and DNS-AAAA Record
+if [ -z "$DNS_A" ] && [ -z "$DNS_AAAA" ]; then echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record!" && exit 1; fi
+
 echoLOG b "OK, let's get started. Your selection is"
-echoLOG no "Omada Software Controller - Version ${Omada_Version} from ${Omada_Date}"
-echoLOG no "MongoDB - Version ${MongoDB_Version}"
-echoLOG no "FQDN for SSL Certification - ${Certbot_URL}"
-echoLOG no "E-Mail for SSL Certification - ${Certbot_Email}"
+echoLOG no "DNS A-Record:     ${DNS_A}"
+echoLOG no "DNS AAAA-Record:  ${DNS_AAAA}"
+echoLOG no "MongoDB Version:  ${MongoDB_Version}"
+echoLOG no "FQDN for SSL Certification:    ${Certbot_URL}"
+echoLOG no "E-Mail for SSL Certification:  ${Certbot_Email}"
+echoLOG no "Install Omada Software Controller Version ${Omada_Version} from ${Omada_Date}"
 
 # Import the MongoDB 4.4 public key and add repo
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 &>/dev/null
