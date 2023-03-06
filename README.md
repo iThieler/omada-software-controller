@@ -21,3 +21,29 @@ Run the following command in your shell. ⚠️ **UBUNTU 20.04 ONLY**
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/iThieler/omada-software-controller/main/install.sh)
 ```
+
+<br><h1 align="center" id="heading"> Good to know & more </h1>
+
+<details>
+<summary markdown="span"> Start the Omada Software Controller </summary>
+ 
+```bash
+tpeap start
+```
+</details>
+
+<details>
+<summary markdown="span"> Stop the Omada Software Controller </summary>
+ 
+```bash
+tpeap stop
+```
+</details>
+
+<details>
+<summary markdown="span"> Get Status of the Omada Software Controller </summary>
+ 
+```bash
+tpeap status
+```
+</details>
