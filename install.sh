@@ -14,6 +14,7 @@ echo -e "
 # set iThieler's CI
 # loads whiptail color sheme
 if [ -f ~/.iThielers_NEWT_COLORS ]; then
+  echoLOG b "iThieler's CI-Files found"
   export NEWT_COLORS_FILE=~/.iThielers_NEWT_COLORS
 else
   echoLOG b "no CI-Files found"
@@ -49,45 +50,36 @@ sel=("1" "Install Version 5.9.9" \
 menuSelection=$(whiptail --menu --nocancel --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " CONFIGURING OMADA SOFTWARE CONTROLLER " "\nWhich version do you want to install?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
 
 if [[ $menuSelection == "1" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.9.9"
   Omada_Version="5.9.9"
   Omada_Date="2023-02-27"
 elif [[ $menuSelection == "2" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.8.4"
   Omada_Version="5.8.4"
   Omada_Date="2023-01-30"
 elif [[ $menuSelection == "3" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.7.4"
   Omada_Version="5.7.4"
   Omada_Date="2022-11-21"
 elif [[ $menuSelection == "4" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.6.3"
   Omada_Version="5.6.3"
   Omada_Date="2022-10-24"
 elif [[ $menuSelection == "5" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.5.6"
   Omada_Version="5.5.6"
   Omada_Date="2022-08-22"
 elif [[ $menuSelection == "6" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.4.6"
   Omada_Version="5.4.6"
   Omada_Date="2022-07-29"
 elif [[ $menuSelection == "7" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.3.1"
   Omada_Version="5.3.1"
   Omada_Date="2022-05-07"
 elif [[ $menuSelection == "8" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.1.7"
   Omada_Version="5.1.7"
   Omada_Date="2022-03-22"
 elif [[ $menuSelection == "9" ]]; then
-  echoLOG b "Select >> I want to install Omada Software Controller Version 5.0.30"
   Omada_Version="5.0.30"
   Omada_Date="2022-01-20"
 elif [[ $menuSelection == "Q" ]]; then
-  echoLOG b "Select >> I want to exit and clean up!"
   echoLOG y "one moment please, while finishing script"
   cleanup
+  echoLOG g "Bye :-)"
   exit 0
 else
   exit 1
@@ -95,6 +87,12 @@ fi
 
 # Check Ubuntu Version
 if ! lsb_release -c | grep -cw "focal" &>/dev/null; then echoLOG r "Script only supports Ubuntu 20.04 (focal)!" && exit 1; fi
+
+echoLOG b "OK, let's get started. Your selection is"
+echoLOG no "Omada Software Controller - Version ${Omada_Version} from ${Omada_Date}"
+echoLOG no "MongoDB - Version ${MongoDB_Version}"
+echoLOG no "FQDN for SSL Certification - ${Certbot_URL}"
+echoLOG no "E-Mail for SSL Certification - ${Certbot_Email}"
 
 # Import the MongoDB 4.4 public key and add repo
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 &>/dev/null
@@ -105,7 +103,7 @@ echoLOG b "Updating package repository"
 apt-get update 2>&1 >/dev/null
 
 # Install Software dependencies
-echolog y "Install Software dependencies"
+echoLOG y "Install Software dependencies"
 for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl snapd; do
   if checkPKG $PACKAGE; then
     echoLOG b "already installed: $PACKAGE"
