@@ -36,8 +36,8 @@ MongoDB_Version="4.4"
 # Let's Encrypt needs
 Certbot_URL=$(whip_inputbox "OK" "CERTBOT" "What is the Domainname (FQDN) of your server?" "omada.mydomain.com")
 DNS_A=`dig +short $Certbot_URL A`
-DNS_AAAA=`dig +short $Certbot_URL AAAA`
 Certbot_Email=$(whip_inputbox "OK" "CERTBOT" "Which e-mail address is used for certificate messages?" "acme@mydomain.com")
+DNS_AAAA=`dig +short $Certbot_URL AAAA`
 # Omada Software Controller Version
 sel=("1" "Install Version 5.9.9" \
      "2" "Install Version 5.8.4" \
