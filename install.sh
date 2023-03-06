@@ -149,19 +149,13 @@ fi
 
 # Genearte Skript for renew cronjob
 cat > /opt/renew_certificate.sh <<EOF
-if ! tpeap status | grep -cw "not running" &>/dev/nul; then
-  tpeap stop
-fi
+if ! tpeap status | grep -cw "not running" &>/dev/nul; then tpeap stop; fi
 rm /opt/tplink/EAPController/data/keystore/*
 cp /etc/letsencrypt/live/${Certbot_URL}/cert.pem /opt/tplink/EAPController/data/keystore/eap.cer
-openssl pkcs12 -export -inkey /etc/letsencrypt/live/${Certbot_URL}/privkey.pem -in /etc/letsencrypt/live/${Certbot_URL}/cert.pem -certfile /etc/letsencrypt/live/${Certbot_URL}/chain.pem -name eap -out omada-certificate.p12 -password pass:tplink
-keytool -importkeystore -srckeystore omada-certificate.p12 -srcstorepass tplink -srcstoretype pkcs12 -destkeystore /opt/tplink/EAPController/data/keystore/eap.keystore -deststorepass tplink -deststoretype pkcs12
+openssl pkcs12 -export -inkey /etc/letsencrypt/live/${Certbot_URL}/privkey.pem -in /etc/letsencrypt/live/${Certbot_URL}/cert.pem -certfile /etc/letsencrypt/live/${Certbot_URL}/chain.pem -name eap -out omada-certificate.p12 -password pass:tplink &>/dev/nul
+keytool -importkeystore -srckeystore omada-certificate.p12 -srcstorepass tplink -srcstoretype pkcs12 -destkeystore /opt/tplink/EAPController/data/keystore/eap.keystore -deststorepass tplink -deststoretype pkcs12 &>/dev/nul
 if tpeap status | grep -cw "not running" &>/dev/nul; then
-  if tpeap start &>/dev/nul; then
-    exit 0
-  else
-    exit 1
-  fi
+  if tpeap start &>/dev/nul; then exit 0; else exit 1; fi
 fi
 EOF
 chmod +x /opt/renew_certificate.sh
