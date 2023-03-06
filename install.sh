@@ -97,29 +97,31 @@ fi
 if ! lsb_release -c | grep -cw "focal" &>/dev/null; then echoLOG r "Script only supports Ubuntu 20.04 (focal)!" && exit 1; fi
 
 # Import the MongoDB 4.4 public key and add repo
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 &>/dev/null
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 2>&1 >/dev/null
 echo "deb http://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list &>/dev/null
 
 # Update and upgrade Server
 apt-get update 2>&1 >/dev/null
 
 # Install Software dependencies
-if apt-get install -y openjdk-8-jre-headless mongodb-org jsvc curl snapd 2>&1 >/dev/null; then
-  echoLOG g "install Software dependencies"
-else
-  echoLOG r "install Software dependencies"
-  exit 1
-fi
+echolog b "Install Software dependencies"
+for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl snapd; do
+  if apt-get install -y $PACKAGE 2>&1 >/dev/null; then
+    echoLOG g "install Package: $PACKAGE"
+  else
+    echoLOG r "install Package: $PACKAGE"
+    exit 1
+  fi
+done
 
 # Update Server
+echolog b "Update & Upgrade"
 if updateHost; then
-  echoLOG g "initial Systemupdate"
+  echoLOG g "first full server update"
 else
-  echoLOG r "initial Systemupdate"
+  echoLOG r "first full server update"
   exit 1
 fi
-
-echoLOG g "system preparation finished"
 
 # Install certbot via snap
 if snap install core 2>&1 >/dev/null; then
@@ -130,7 +132,7 @@ else
   exit 1
 fi
 
-if snap install certbot --classic 2>&1 >/dev/null; then
+if snap install certbot --classic &>/dev/null; then
   ln -s /snap/bin/certbot /usr/bin/certbot
   echoLOG g "install Certbot"
 else
@@ -167,35 +169,13 @@ crontab -l | { cat; echo "15 3 1 * * /opt/renew_certificate.sh"; } | crontab -
 
 # Download Omada Software Controller package and install
 URL="https://static.tp-link.com/upload/software/$(echo $Omada_Date | cut -d- -f1)/$(echo $Omada_Date | cut -d- -f1,2 | tr -d '-')/$(echo $Omada_Date | cut -d- -f1,2,3 | tr -d '-')/Omada_SDN_Controller_v${Omada_Version}_Linux_x64.deb"
-FILE="$(basename "$URL")"
-rm -f $FILE
+FILE="~/$(basename "$URL")"
+if [ -f ${FILE} ]; then rm -f ${FILE}; fi
 
-length=$(curl -I $URL 2>&1 | awk '/Length/ {print $2}')
-length=${length/$'\r'/}
-
-exec 3> >(whiptail --gauge --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " DOWNLOAD " "The installation package is downloading, please wait ..." 10 80 0)
-
-wget $URL 2>/dev/null &
-proc=$!
-
-if [ "$proc" != "" ]; then
-  while ( true ); do
-    size=$( stat -c %s  "$FILE" )
-    if [ "$size" != "" ]; then 
-      echo $(($size*100/$length)) >&3
-    fi
-	  if [ `ps | grep -c $proc` -eq 0 ]; then
-      break
-    fi
-  done
-fi
-
-size=$( stat -c %s  "$FILE" )
-
-if [ $size = $length ] ; then
-  echoLOG g "download Omada Software Controller installation package"
-else
-  echoLOG r "download Omada Software Controller installation package"
+if wget -q ${URL} -O ${FILE}; then
+    echoLOG g "download Omada Software Controller package"
+  else
+    echoLOG r "download Omada Software Controller package"
 fi
 
 if dpkg -i $FILE 2>&1 >/dev/null; then
@@ -211,7 +191,7 @@ else
   echolog r "WebGUI secured with SSL certificate"
 fi
 
-if tpeap status &>/dev/nul | grep -cw "running"; then
+if ! tpeap status | grep -cw "not running" &>/dev/nul; then
   echolog y "Omada SDN Controller is now installed!"
   echo "Please visit the following URL to manage your devices:"
   echo "  https://${Certbot_URL}:8043"
