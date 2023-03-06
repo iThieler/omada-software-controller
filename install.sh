@@ -29,7 +29,6 @@ echo -e "
  |_| |_| |_||_|_\___|_\___|_|   /__/
  Omada Software Controller Installer                                          
 "
-}
 
 # MongoDB Version
 MongoDB_Version="4.4"
