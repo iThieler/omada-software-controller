@@ -102,6 +102,9 @@ if [ $DNS_A_First -eq 10 ] || [ $DNS_A_First -eq 127 ]; then
 elif [ $DNS_A_First -eq 192 ] && [ $DNS_A_Second -eq 168 ]; then
   echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record for public IPs!"
   exit 1
+elif [ $DNS_A_First -eq 169 ] && [ $DNS_A_Second -eq 254 ]; then
+  echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record for public IPs!"
+  exit 1
 elif [ $DNS_A_First -eq 172 ] && [ $DNS_A_Second -ge 16 ] && [ $DNS_A_Second -le 31 ]; then
   echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record for public IPs!"
   exit 1
