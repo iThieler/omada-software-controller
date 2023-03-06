@@ -23,7 +23,7 @@ function checkIP() {
 
 # Function checked if an Package is installed, returned true or false
 function checkPKG() {
-  if [ $(dpkg-query -s "${1}" | grep -cw "Status: install ok installed") -eq 1 ]; then
+  if dpkg -l "${1}" &> /dev/null; then
     true
   else
     false
