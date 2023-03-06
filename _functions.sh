@@ -120,8 +120,8 @@ function echoLOG() {
     echo -e "$(date +'%Y-%m-%d  %T')  [${blue}INFO${nc}]   $text"
     echo -e "$(date +'%Y-%m-%d  %T')  [INFO]   $text" >> "${logfile}"
   elif [[ $typ == "no" ]]; then
-    echo -e "$(date +'%Y-%m-%d  %T')           $text"
-    echo -e "$(date +'%Y-%m-%d  %T')           $text" >> "${logfile}"
+    echo -e "                               $text"
+    echo -e "                               $text" >> "${logfile}"
   fi
 }
 
