@@ -2,6 +2,35 @@
 # Load Functionfile
 source <(curl -s https://raw.githubusercontent.com/iThieler/omada-software-controller/main/_functions.sh)
 
+# set iThieler's CI
+# loads whiptail color sheme
+if [ -f ~/.iThielers_NEWT_COLORS ]; then
+  export NEWT_COLORS_FILE=~/.iThielers_NEWT_COLORS
+else
+  echoLOG b "no CI-Files found"
+  if wget -q https://raw.githubusercontent.com/iThieler/Proxmox/main/misc/newt_colors_file.txt -O ~/.iThielers_NEWT_COLORS; then
+    echoLOG g "download normal mode CI-File"
+    export NEWT_COLORS_FILE=~/.iThielers_NEWT_COLORS
+  else
+    echoLOG r "download normal mode CI-File"
+  fi
+  if wget -q https://raw.githubusercontent.com/iThieler/Proxmox/main/misc/newt_colors_alert_file.txt -O ~/.iThielers_NEWT_COLORS_ALERT; then
+    echoLOG g "download alert mode CI-File"
+  else
+    echoLOG r "download alert mode CI-File"
+  fi
+fi
+
+clear
+echo -e "
+  _ _____ _    _     _         _
+ (_)_   _| |_ (_)___| |___ _ _( )___
+ | | | | | ' \| / -_) / -_) '_|/(_-<
+ |_| |_| |_||_|_\___|_\___|_|   /__/
+ Omada Software Controller Installer                                          
+"
+}
+
 # MongoDB Version
 MongoDB_Version="4.4"
 # Let's Encrypt needs
