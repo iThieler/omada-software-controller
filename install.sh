@@ -101,14 +101,14 @@ apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 &>
 echo "deb http://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list &>/dev/null
 
 # Update and upgrade Server
-echolog b "Updating package repository"
+echoLOG b "Updating package repository"
 apt-get update 2>&1 >/dev/null
 
 # Install Software dependencies
 echolog y "Install Software dependencies"
 for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl snapd; do
   if checkPKG $PACKAGE; then
-    echolog b "already installed: $PACKAGE"
+    echoLOG b "already installed: $PACKAGE"
   else
     if apt-get install -y $PACKAGE 2>&1 >/dev/null; then
       echoLOG g "install Package: $PACKAGE"
@@ -120,7 +120,7 @@ for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl snapd; do
 done
 
 # Update Server
-echolog b "Update & Upgrade"
+echoLOG b "Update & Upgrade"
 if updateHost; then
   echoLOG g "first full server update"
 else
@@ -185,18 +185,18 @@ else
 fi
 
 if /opt/renew_certificate.sh; then
-  echolog g "WebGUI secured with SSL certificate"
+  echoLOG g "WebGUI secured with SSL certificate"
 else
-  echolog r "WebGUI secured with SSL certificate"
+  echoLOG r "WebGUI secured with SSL certificate"
 fi
 
 if ! tpeap status | grep -cw "not running" &>/dev/nul; then
-  echolog y "Omada SDN Controller is now installed!"
+  echoLOG y "Omada SDN Controller is now installed!"
   echo "Please visit the following URL to manage your devices:"
   echo "  https://${Certbot_URL}:8043"
-  echolog y "Have Fun :-)!"
+  echoLOG y "Have Fun :-)!"
 else
-  echolog r "Omada SDN Controller could not be installed :-(!"
+  echoLOG r "Omada SDN Controller could not be installed :-(!"
 fi
 
 exit
