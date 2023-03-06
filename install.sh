@@ -2,6 +2,15 @@
 # Load Functionfile
 source <(curl -s https://raw.githubusercontent.com/iThieler/omada-software-controller/main/_functions.sh)
 
+clear
+echo -e "
+  _ _____ _    _     _         _
+ (_)_   _| |_ (_)___| |___ _ _( )___
+ | | | | | ' \| / -_) / -_) '_|/(_-<
+ |_| |_| |_||_|_\___|_\___|_|   /__/
+ Omada Software Controller Installer                                          
+"
+
 # set iThieler's CI
 # loads whiptail color sheme
 if [ -f ~/.iThielers_NEWT_COLORS ]; then
@@ -20,15 +29,6 @@ else
     echoLOG r "download alert mode CI-File"
   fi
 fi
-
-clear
-echo -e "
-  _ _____ _    _     _         _
- (_)_   _| |_ (_)___| |___ _ _( )___
- | | | | | ' \| / -_) / -_) '_|/(_-<
- |_| |_| |_||_|_\___|_\___|_|   /__/
- Omada Software Controller Installer                                          
-"
 
 # MongoDB Version
 MongoDB_Version="4.4"
@@ -97,20 +97,25 @@ fi
 if ! lsb_release -c | grep -cw "focal" &>/dev/null; then echoLOG r "Script only supports Ubuntu 20.04 (focal)!" && exit 1; fi
 
 # Import the MongoDB 4.4 public key and add repo
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 2>&1 >/dev/null
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 &>/dev/null
 echo "deb http://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list &>/dev/null
 
 # Update and upgrade Server
+echolog b "Updating package repository"
 apt-get update 2>&1 >/dev/null
 
 # Install Software dependencies
-echolog b "Install Software dependencies"
+echolog y "Install Software dependencies"
 for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl snapd; do
-  if apt-get install -y $PACKAGE 2>&1 >/dev/null; then
-    echoLOG g "install Package: $PACKAGE"
+  if checkPKG $PACKAGE; then
+    echolog b "already installed: $PACKAGE"
   else
-    echoLOG r "install Package: $PACKAGE"
-    exit 1
+    if apt-get install -y $PACKAGE 2>&1 >/dev/null; then
+      echoLOG g "install Package: $PACKAGE"
+    else
+      echoLOG r "install Package: $PACKAGE"
+      exit 1
+    fi
   fi
 done
 
