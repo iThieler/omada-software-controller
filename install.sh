@@ -16,7 +16,7 @@ if ! lsb_release -c | grep -cw "focal" &>/dev/null; then echo -e "\e[1;31mERROR:
 
 # Import the MongoDB 4.4 public key and add repo
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5
-echo "deb http://repo.mongodb.org/apt/ubuntu $OsVer/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+echo "deb http://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
 
 # Update and upgrade Server
 apt update && apt upgrade -y
