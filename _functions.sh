@@ -98,7 +98,7 @@ function cleanup() {
 function echoLOG() {
   typ=$1
   text=$(echo -e $2 | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ +/ /g')
-  logfile="/root/log_iThieler-Proxmox-Script.txt"
+  logfile="/root/log_iThielers-Omada-Script.txt"
   nc='\033[0m'
   red='\033[1;31m'
   green='\033[1;32m'
