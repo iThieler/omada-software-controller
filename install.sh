@@ -56,7 +56,7 @@ if [[ $menuSelection == "1" ]]; then
   Omada_Date="2023-02-27"
 elif [[ $menuSelection == "2" ]]; then
   Omada_Version="5.8.4"
-  Omada_Date="2023-01-30"
+  Omada_Date="2023-01-06"
 elif [[ $menuSelection == "3" ]]; then
   Omada_Version="5.7.4"
   Omada_Date="2022-11-21"
@@ -128,8 +128,13 @@ apt-get update 2>&1 >/dev/null
 
 # Install Software dependencies
 echoLOG y "Install Software dependencies"
-for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl snapd; do
+for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl; do
   sleep 2
+  if dpkg -l "$PACKAGE" &> /dev/null; then
+    true
+  else
+    false
+  fi
   if checkPKG $PACKAGE; then
     echoLOG b "already installed: $PACKAGE"
   else
@@ -141,6 +146,12 @@ for PACKAGE in openjdk-8-jre-headless mongodb-org jsvc curl snapd; do
     fi
   fi
 done
+if apt-get install -y snapd 2>&1 >/dev/null; then
+  echoLOG g "install Package: snapd"
+else
+  echoLOG r "install Package: snapd"
+  exit 1
+fi
 
 # Update Server
 echoLOG b "Update & Upgrade"
@@ -153,14 +164,14 @@ fi
 
 # Install certbot via snap
 if snap install core 2>&1 >/dev/null; then
-  snap refresh core 2>&1 >/dev/null
+  snap refresh core &> /dev/null
   echoLOG g "install SNAP Core"
 else
   echoLOG r "install SNAP Core"
   exit 1
 fi
 
-if snap install certbot --classic &>/dev/null; then
+if snap install certbot --classic 2>&1 >/dev/null; then
   ln -s /snap/bin/certbot /usr/bin/certbot
   echoLOG g "install Certbot"
 else
@@ -168,7 +179,7 @@ else
   exit 1
 fi
 
-if certbot certonly --standalone --agree-tos -d ${Certbot_URL} -m ${Certbot_Email} -n 2>&1 >/dev/null; then
+if certbot certonly --standalone --agree-tos -d ${Certbot_URL} -m ${Certbot_Email} -n &> /dev/null; then
   echoLOG g "create Let's Encrypt certificate"
 else
   echoLOG r "create Let's Encrypt certificate"
@@ -187,27 +198,27 @@ if tpeap status | grep -cw "not running" &>/dev/nul; then
 fi
 EOF
 chmod +x /opt/renew_certificate.sh
-crontab -l | { cat; echo "15 3 1 * * /opt/renew_certificate.sh"; } | crontab -
+crontab -l &> /dev/null | { cat; echo "15 3 1 * * /opt/renew_certificate.sh"; } | crontab -
 
 # Download Omada Software Controller package and install
 URL="https://static.tp-link.com/upload/software/$(echo $Omada_Date | cut -d- -f1)/$(echo $Omada_Date | cut -d- -f1,2 | tr -d '-')/$(echo $Omada_Date | cut -d- -f1,2,3 | tr -d '-')/Omada_SDN_Controller_v${Omada_Version}_Linux_x64.deb"
-FILE="~/$(basename "$URL")"
-if [ -f ${FILE} ]; then rm -f ${FILE}; fi
+FILE="/root/$(basename "$URL")"
+if [ -f "$FILE" ]; then rm -f "$FILE"; fi
 
-if wget -q ${URL} -O ${FILE}; then
+if wget -q "$URL" -O "$FILE"; then
     echoLOG g "download Omada Software Controller package"
   else
     echoLOG r "download Omada Software Controller package"
 fi
 
-if dpkg -i $FILE 2>&1 >/dev/null; then
+if dpkg -i "$FILE" &> /dev/null; then
   echoLOG g "install Omada Software Controller"
 else
   echoLOG r "install Omada Software Controller"
   exit 1
 fi
 
-if /opt/renew_certificate.sh; then
+if /opt/renew_certificate.sh &> /dev/null; then
   echoLOG g "WebGUI secured with SSL certificate"
 else
   echoLOG r "WebGUI secured with SSL certificate"
@@ -215,8 +226,8 @@ fi
 
 if ! tpeap status | grep -cw "not running" &>/dev/nul; then
   echoLOG y "Omada SDN Controller is now installed!"
-  echo "Please visit the following URL to manage your devices:"
-  echo "  https://${Certbot_URL}:8043"
+  echoLOG no "Please visit the following URL to manage your devices:"
+  echoLOG no "https://${Certbot_URL}:8043"
   echoLOG y "Have Fun :-)!"
 else
   echoLOG r "Omada SDN Controller could not be installed :-(!"
