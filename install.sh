@@ -136,7 +136,10 @@ echo "deb http://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" |
 
 # Update and upgrade Server
 echoLOG b "Updating package repository"
-apt-get update 2>&1 >/dev/null
+if ! apt-get update 2>&1 >/dev/null; then
+  echoLOG r "Failed to update package repository."
+  exit 1
+fi
 
 # Install Software dependencies
 echoLOG y "Install Software dependencies"
