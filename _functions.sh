@@ -2,7 +2,7 @@
 
 # Function ping given IP and return TRUE if available
 function pingIP() {
-  if ping -c 1 $1 &> /dev/null; then
+  if ping -c 1 "$1" &> /dev/null; then
     true
   else
     false
@@ -146,26 +146,32 @@ function whip_yesno() {
 
 # give a whiptail box with input field
 function whip_inputbox() {
-  #call whip_inputbox "btn" "title" "message" "default value"
   input=$(whiptail --inputbox --ok-button " ${1} " --nocancel --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " ${2} " "\n${3}" 0 80 "${4}" 3>&1 1>&2 2>&3)
-  if [[ $input == "" ]]; then
+  input=$(echo "$input" | tr -d '\r')  # Entferne eventuelle Carriage Return-Zeichen
+  if [[ -z "$input" ]]; then
     whip_inputbox "$1" "$2" "$3" "$4\n\n!!! There must be an input !!!" ""
   else
-    echo "${input}"
+    # Überprüfe, ob die Eingabe nur aus Buchstaben, Zahlen, Unterstrichen, "-", "@" und "." besteht
+    if [[ ! "$input" =~ ^[a-zA-Z0-9_@.:/-]+$ ]]; then
+      whip_inputbox "$1" "$2" "$3" "$4\n\n!!! Invalid characters in input !!!" ""
+    else
+      echo "$input"
+    fi
   fi
 }
 
 # give a whiptail box with input field and cancel button
 function whip_inputbox_cancel() {
-  #call whip_inputbox_cancel "btn1" "btn2" "title" "message" "default value"
-  input=$(whiptail --inputbox --ok-button " ${1} " --cancel-button " ${2} " --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " ${3} " "\n${4}" 0 80 "${5}" 3>&1 1>&2 2>&3)
-  if [ $? -eq 1 ]; then
-    echo cancel
+  input=$(whiptail --inputbox --ok-button " ${1} " --cancel-button " ${2} " --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " ${2} " "\n${3}" 0 80 "${4}" 3>&1 1>&2 2>&3)
+  input=$(echo "$input" | tr -d '\r')  # Entferne eventuelle Carriage Return-Zeichen
+  if [[ -z "$input" ]]; then
+    whip_inputbox "$1" "$2" "$3" "$4\n\n!!! There must be an input !!!" ""
   else
-    if [[ $input == "" ]]; then
-      whip_inputbox_cancel "$1" "$2" "$3" "$4\n\n!!! There must be an input !!!" ""
+    # Überprüfe, ob die Eingabe nur aus Buchstaben, Zahlen, Unterstrichen, "-", "@" und "." besteht
+    if [[ ! "$input" =~ ^[a-zA-Z0-9_@.:/-]+$ ]]; then
+      whip_inputbox "$1" "$2" "$3" "$4\n\n!!! Invalid characters in input !!!" ""
     else
-      echo "${input}"
+      echo "$input"
     fi
   fi
 }
@@ -216,28 +222,34 @@ function whip_alert_yesno() {
 
 # give a whiptail box with input field in alert mode
 function whip_alert_inputbox() {
-  #call whip_alert_inputbox "btn" "title" "message" "default value"
   NEWT_COLORS_FILE=~/.iThielers_NEWT_COLORS_ALERT \
   input=$(whiptail --inputbox --ok-button " ${1} " --nocancel --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " ${2} " "\n${3}" 0 80 "${4}" 3>&1 1>&2 2>&3)
-  if [[ $input == "" ]]; then
+  input=$(echo "$input" | tr -d '\r')  # Entferne eventuelle Carriage Return-Zeichen
+  if [[ -z "$input" ]]; then
     whip_inputbox "$1" "$2" "$3" "$4\n\n!!! There must be an input !!!" ""
   else
-    echo "${input}"
+    # Überprüfe, ob die Eingabe nur aus erlaubten Zeichen besteht
+    if [[ ! "$input" =~ ^[a-zA-Z0-9_:@/.-]+$ ]]; then
+      whip_inputbox "$1" "$2" "$3" "$4\n\n!!! Invalid characters in input !!!" ""
+    else
+      echo "$input"
+    fi
   fi
 }
 
 # give a whiptail box with input field and cancel button in alert mode
 function whip_alert_inputbox_cancel() {
-  #call whip_alert_inputbox_cancel "btn1" "btn2" "title" "message" "default value"
   NEWT_COLORS_FILE=~/.iThielers_NEWT_COLORS_ALERT \
-  input=$(whiptail --inputbox --ok-button " ${1} " --cancel-button " ${2} " --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " ${3} " "\n${4}" 0 80 "${5}" 3>&1 1>&2 2>&3)
-  if [ $? -eq 1 ]; then
-    echo cancel
+  input=$(whiptail --inputbox --ok-button " ${1} " --cancel-button " ${2} " --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " ${2} " "\n${3}" 0 80 "${4}" 3>&1 1>&2 2>&3)
+  input=$(echo "$input" | tr -d '\r')  # Entferne eventuelle Carriage Return-Zeichen
+  if [[ -z "$input" ]]; then
+    whip_inputbox "$1" "$2" "$3" "$4\n\n!!! There must be an input !!!" ""
   else
-    if [[ $input == "" ]]; then
-      whip_inputbox_cancel "$1" "$2" "$3" "$4\n\n!!! There must be an input !!!" ""
+    # Überprüfe, ob die Eingabe nur aus Buchstaben, Zahlen, Unterstrichen, "-", "@" und "." besteht
+    if [[ ! "$input" =~ ^[a-zA-Z0-9_@.:/-]+$ ]]; then
+      whip_inputbox "$1" "$2" "$3" "$4\n\n!!! Invalid characters in input !!!" ""
     else
-      echo "${input}"
+      echo "$input"
     fi
   fi
 }
