@@ -1,6 +1,6 @@
 #!/bin/bash
 # Load Functionfile
-source <(curl -s https://raw.githubusercontent.com/iThieler/omada-software-controller/main/_functions.sh)
+source <(curl -s https://github.com/iThieler/omada-software-controller/raw/main/_functions.sh)
 
 clear
 echo -e "
@@ -88,10 +88,16 @@ else
 fi
 
 # Check Ubuntu Version
-if ! lsb_release -c | grep -cw "focal" &>/dev/null; then echoLOG r "Script only supports Ubuntu 20.04 (focal)!" && exit 1; fi
+if ! lsb_release -c | grep -cw "focal" &>/dev/null; then
+  echoLOG r "Script only supports Ubuntu 20.04 (focal)!"
+  exit 1
+fi
 
 # Check DNS-A and DNS-AAAA Record
-if [ -z "$DNS_A" ] && [ -z "$DNS_AAAA" ]; then echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record!" && exit 1; fi
+if [ -z "$DNS_A" ] && [ -z "$DNS_AAAA" ]; then
+  echoLOG r "Script only supports Domainnames (FQDN) with valid DNS-A and/or DNS-AAAA Record!"
+  exit 1
+fi
 
 # Check DNS-A for privat Network IP
 DNS_A_First=`echo $DNS_A | cut -d. -f1`
