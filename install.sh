@@ -11,6 +11,12 @@ echo -e "
  Omada Software Controller Installer                                          
 "
 
+# check if Skript runs with root User
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root."
+  exit 1
+fi
+
 # set iThieler's CI
 # loads whiptail color sheme
 if [ -f ~/.iThielers_NEWT_COLORS ]; then
