@@ -45,53 +45,8 @@ DNS_A=`dig +short $Certbot_URL A`
 Certbot_Email=$(whip_inputbox "OK" "CERTBOT" "Which e-mail address is used for certificate messages?" "acme@mydomain.com")
 DNS_AAAA=`dig +short $Certbot_URL AAAA`
 # Omada Software Controller Version
-sel=("1" "Install Version 5.9.9" \
-     "2" "Install Version 5.8.4" \
-     "3" "Install Version 5.7.4" \
-     "4" "Install Version 5.6.3" \
-     "5" "Install Version 5.5.6" \
-     "6" "Install Version 5.4.6" \
-     "7" "Install Version 5.3.1" \
-     "8" "Install Version 5.1.7" \
-     "9" "Install Version 5.0.30"
-     "Q" "I want to abort!")
-menuSelection=$(whiptail --menu --nocancel --backtitle "© 2023 - iThieler's Omada Software Controller Installer" --title " CONFIGURING OMADA SOFTWARE CONTROLLER " "\nWhich version do you want to install?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
-
-if [[ $menuSelection == "1" ]]; then
-  Omada_Version="5.9.9"
-  Omada_Date="2023-02-27"
-elif [[ $menuSelection == "2" ]]; then
-  Omada_Version="5.8.4"
-  Omada_Date="2023-01-06"
-elif [[ $menuSelection == "3" ]]; then
-  Omada_Version="5.7.4"
-  Omada_Date="2022-11-21"
-elif [[ $menuSelection == "4" ]]; then
-  Omada_Version="5.6.3"
-  Omada_Date="2022-10-24"
-elif [[ $menuSelection == "5" ]]; then
-  Omada_Version="5.5.6"
-  Omada_Date="2022-08-22"
-elif [[ $menuSelection == "6" ]]; then
-  Omada_Version="5.4.6"
-  Omada_Date="2022-07-29"
-elif [[ $menuSelection == "7" ]]; then
-  Omada_Version="5.3.1"
-  Omada_Date="2022-05-07"
-elif [[ $menuSelection == "8" ]]; then
-  Omada_Version="5.1.7"
-  Omada_Date="2022-03-22"
-elif [[ $menuSelection == "9" ]]; then
-  Omada_Version="5.0.30"
-  Omada_Date="2022-01-20"
-elif [[ $menuSelection == "Q" ]]; then
-  echoLOG y "one moment please, while finishing script"
-  cleanup
-  echoLOG g "Bye :-)"
-  exit 0
-else
-  exit 1
-fi
+Omada_Version="5.13.23"
+Omada_Date="2024-01-12"
 
 # Check Ubuntu Version
 if ! lsb_release -c | grep -cw "focal" &>/dev/null; then
