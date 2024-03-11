@@ -49,7 +49,9 @@ Omada_Version="5.13.23"
 Omada_Date="2024-01-12"
 
 # Check Ubuntu Version
-if ! lsb_release -c | grep -cw "focal" &>/dev/null; then
+OSVersion=$(. /etc/os-release; printf '%s\n' "$VERSION_ID";)
+OSCodeName=$(. /etc/os-release; printf '%s\n' "$VERSION_CODENAME";)
+if [ ! $OSCodeName == "focal"  ] || [ ! $OSCodeName == "jammy" ] || [ ! $OSVersion == "20.04" ] || [ ! $OSVersion == "22.04" ]; then
   echoLOG r "Script only supports Ubuntu 20.04 (focal)!"
   exit 1
 fi
