@@ -1,6 +1,6 @@
 #!/bin/bash
 # Load Functionfile
-source <(curl -s https://github.com/iThieler/omada-software-controller/raw/main/_functions.sh)
+source <(curl -s https://raw.githubusercontent.com/iThieler/omada-software-controller/main/_functions.sh)
 
 clear
 echo -e "
